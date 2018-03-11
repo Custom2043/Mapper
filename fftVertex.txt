@@ -1,0 +1,16 @@
+#version 150
+
+in vec3 datas;
+
+out float yy;
+
+uniform mat4 projectionMatrix;
+uniform vec2 screen;
+uniform float fft[513];
+
+void main()
+{
+	
+	gl_Position = projectionMatrix * vec4(int(datas.x),int(datas.y * fft[int(datas.z)]),0.0,1.0);		
+	yy = gl_Position.y;
+}

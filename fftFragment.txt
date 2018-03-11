@@ -1,0 +1,10 @@
+#version 150
+
+in float yy;
+
+uniform sampler2D modelTexture;
+
+void main()
+{
+	gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0) * (1 - yy) + vec4(1.0, 0.0, 0.0, 1.0) * yy;
+}
