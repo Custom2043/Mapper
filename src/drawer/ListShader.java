@@ -16,10 +16,10 @@ public class ListShader extends ScreenCoorShader
 	}
 	public void loadStart(float x, float y)
 	{
-		this.loadVector2f(location_start, x, y);
+		this.loadVector2f(this.location_start, x, y);
 	}
 	public void loadFading(float f, float yStart, float height)
 	{
-		this.loadVector(location_fading, f, yStart, height);
+		this.loadVector(this.location_fading, f, yStart, height);
 	}
 }

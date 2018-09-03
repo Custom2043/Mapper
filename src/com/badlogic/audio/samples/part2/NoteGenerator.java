@@ -5,11 +5,11 @@ import com.badlogic.audio.io.AudioDevice;
 /**
  * A simple generator that outputs a sinewave at some
  * frequency (here 440Hz = Note A) in mono to an {@link AudioDevice}.
- * 
+ *
  * @author mzechner
  *
  */
-public class NoteGenerator 
+public class NoteGenerator
 {
 	public static void main( String[] argv ) throws Exception
 	{
@@ -18,7 +18,7 @@ public class NoteGenerator
 		float angle = 0;
 		AudioDevice device = new AudioDevice( );
 		float samples[] = new float[1024];
-		
+
 		while( true )
 		{
 			for( int i = 0; i < samples.length; i++ )
@@ -26,7 +26,7 @@ public class NoteGenerator
 				samples[i] = (float)Math.sin( angle );
 				angle += increment;
 			}
-			
+
 			device.writeSamples( samples );
 		}
 	}

@@ -20,20 +20,20 @@ public class ColoredScreenCoorModel extends Model
 	protected ColoredScreenCoorModel(ScreenCoor[] sc, QuadColor[] c)
 	{
 		super(sc.length*4);
-		coor = sc;
-		colors = c;
+		this.coor = sc;
+		this.colors = c;
 		this.enableVertexArray(0);
 		this.enableVertexArray(1);
 		this.enableVertexArray(2);
-		
-		VAOLoader.storeBufferInAttributeList(0, 2, storeX(), GL11.GL_FLOAT); 
-		VAOLoader.storeBufferInAttributeList(1, 2, storeY(), GL11.GL_FLOAT); 
-		VAOLoader.storeBufferInAttributeList(2, 4, storeColors(), GL11.GL_UNSIGNED_BYTE);
+
+		VAOLoader.storeBufferInAttributeList(0, 2, this.storeX(), GL11.GL_FLOAT);
+		VAOLoader.storeBufferInAttributeList(1, 2, this.storeY(), GL11.GL_FLOAT);
+		VAOLoader.storeBufferInAttributeList(2, 4, this.storeColors(), GL11.GL_UNSIGNED_BYTE);
 	}
 	public ByteBuffer storeX()
 	{
 		ByteBuffer bufX = BufferUtils.createByteBuffer(this.vertexNumber * 12);
-		for (ScreenCoor screenCoor : coor)
+		for (ScreenCoor screenCoor : this.coor)
 		{
 			bufX.putFloat(screenCoor.xScreen);
 			bufX.putFloat(screenCoor.xFlat);
@@ -53,7 +53,7 @@ public class ColoredScreenCoorModel extends Model
 	public ByteBuffer storeY()
 	{
 		ByteBuffer bufY = BufferUtils.createByteBuffer(this.vertexNumber * 12);
-		for (ScreenCoor screenCoor : coor)
+		for (ScreenCoor screenCoor : this.coor)
 		{
 			bufY.putFloat(screenCoor.yScreen);
 			bufY.putFloat(screenCoor.yFlat);
@@ -73,7 +73,7 @@ public class ColoredScreenCoorModel extends Model
 	public ByteBuffer storeColors()
 	{
 		ByteBuffer buf = BufferUtils.createByteBuffer(this.vertexNumber * 4); // Couleurs
-		for (QuadColor qc : colors)
+		for (QuadColor qc : this.colors)
 			for (Color co : qc.getAsColorArray())
 			{
 				buf.put(co.getRed());

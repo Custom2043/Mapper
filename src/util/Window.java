@@ -42,7 +42,7 @@ public class Window
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) ->
 		{
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-				glfwSetWindowShouldClose(window, true); 
+				glfwSetWindowShouldClose(window, true);
 			// We will
 			// detect
 			// this in
@@ -59,7 +59,7 @@ public class Window
 
 			// Get the window size passed to glfwCreateWindow
 			glfwGetWindowSize(window, pWidth, pHeight);
-			
+
 			width = pWidth.get(0);
 			height = pHeight.get(0);
 
@@ -77,10 +77,10 @@ public class Window
 
 		// Make the window visible
 		glfwShowWindow(window);
-		
+
 		GL.createCapabilities();
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		
+
 		glfwSetErrorCallback(new GLFWErrorCallbackI() {
 			@Override
 			public void invoke(int arg0, long arg1)
@@ -88,7 +88,7 @@ public class Window
 				System.out.println("Window error : "+arg0);
 			}
 		});
-		
+
 		glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback(){
             @Override
             public void invoke(long window, int width, int height){

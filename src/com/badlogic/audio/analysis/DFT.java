@@ -27,21 +27,21 @@ package com.badlogic.audio.analysis;
  * of the DFT are working properly. This implementation expects an even
  * <code>timeSize</code> and will throw and IllegalArgumentException if this
  * is not the case.
- * 
+ *
  * @author Damien Di Fede
- * 
+ *
  * @see FourierTransform
  * @see FFT
  * @see <a href="http://www.dspguide.com/ch8.htm">The Discrete Fourier Transform</a>
- * 
+ *
  */
 public class DFT extends FourierTransform
 {
   /**
-   * Constructs a DFT that expects audio buffers of length <code>timeSize</code> that 
-   * have been recorded with a sample rate of <code>sampleRate</code>. Will throw an 
+   * Constructs a DFT that expects audio buffers of length <code>timeSize</code> that
+   * have been recorded with a sample rate of <code>sampleRate</code>. Will throw an
    * IllegalArgumentException if <code>timeSize</code> is not even.
-   * 
+   *
    * @param timeSize the length of the audio buffers you plan to analyze
    * @param sampleRate the sample rate of the audio samples you plan to analyze
    */
@@ -50,70 +50,70 @@ public class DFT extends FourierTransform
     super(timeSize, sampleRate);
     if (timeSize % 2 != 0)
       throw new IllegalArgumentException("DFT: timeSize must be even.");
-    buildTrigTables();
+    this.buildTrigTables();
   }
 
-  protected void allocateArrays()
+  @Override
+protected void allocateArrays()
   {
-    spectrum = new float[timeSize / 2 + 1];
-    real = new float[timeSize / 2 + 1];
-    imag = new float[timeSize / 2 + 1];
-  }
-
-  /**
-   * Not currently implemented.
-   */
-  public void scaleBand(int i, float s)
-  {
+    this.spectrum = new float[this.timeSize / 2 + 1];
+    this.real = new float[this.timeSize / 2 + 1];
+    this.imag = new float[this.timeSize / 2 + 1];
   }
 
   /**
    * Not currently implemented.
    */
-  public void setBand(int i, float a)
+  @Override
+public void scaleBand(int i, float s)
   {
   }
 
-  public void forward(float[] samples)
+  /**
+   * Not currently implemented.
+   */
+  @Override
+public void setBand(int i, float a)
   {
-    if (samples.length != timeSize)
-    {
-    	throw new IllegalArgumentException("DFT.forward: The length of the passed sample buffer must be equal to DFT.timeSize().");
-    }
-    doWindow(samples);
+  }
+
+  @Override
+public void forward(float[] samples)
+  {
+    if (samples.length != this.timeSize) throw new IllegalArgumentException("DFT.forward: The length of the passed sample buffer must be equal to DFT.timeSize().");
+    this.doWindow(samples);
     int N = samples.length;
     for (int f = 0; f <= N / 2; f++)
     {
-      real[f] = 0.0f;
-      imag[f] = 0.0f;
+      this.real[f] = 0.0f;
+      this.imag[f] = 0.0f;
       for (int t = 0; t < N; t++)
       {
-        real[f] += samples[t] * cos(t * f);
-        imag[f] += samples[t] * -sin(t * f);
+        this.real[f] += samples[t] * this.cos(t * f);
+        this.imag[f] += samples[t] * -this.sin(t * f);
       }
     }
-    fillSpectrum();
+    this.fillSpectrum();
   }
 
-  public void inverse(float[] buffer)
+  @Override
+public void inverse(float[] buffer)
   {
     int N = buffer.length;
-    real[0] /= N;
-    imag[0] = -imag[0] / (N / 2);
-    real[N / 2] /= N;
-    imag[N / 2] = -imag[0] / (N / 2);
+    this.real[0] /= N;
+    this.imag[0] = -this.imag[0] / (N / 2);
+    this.real[N / 2] /= N;
+    this.imag[N / 2] = -this.imag[0] / (N / 2);
     for (int i = 0; i < N / 2; i++)
     {
-      real[i] /= (N / 2);
-      imag[i] = -imag[i] / (N / 2);
+      this.real[i] /= (N / 2);
+      this.imag[i] = -this.imag[i] / (N / 2);
     }
     for (int t = 0; t < N; t++)
     {
       buffer[t] = 0.0f;
       for (int f = 0; f < N / 2; f++)
-      {
-        buffer[t] += real[f] * cos(t * f) + imag[f] * sin(t * f);
-      }
+		buffer[t] += this.real[f] * this.cos(t * f) + this.imag[f] * this.sin(t * f);
     }
   }
 
@@ -124,23 +124,23 @@ public class DFT extends FourierTransform
 
   private void buildTrigTables()
   {
-    int N = spectrum.length * timeSize;
-    sinlookup = new float[N];
-    coslookup = new float[N];
+    int N = this.spectrum.length * this.timeSize;
+    this.sinlookup = new float[N];
+    this.coslookup = new float[N];
     for (int i = 0; i < N; i++)
     {
-      sinlookup[i] = (float) Math.sin(i * TWO_PI / timeSize);
-      coslookup[i] = (float) Math.cos(i * TWO_PI / timeSize);
+      this.sinlookup[i] = (float) Math.sin(i * TWO_PI / this.timeSize);
+      this.coslookup[i] = (float) Math.cos(i * TWO_PI / this.timeSize);
     }
   }
 
   private float sin(int i)
   {
-    return sinlookup[i];
+    return this.sinlookup[i];
   }
 
   private float cos(int i)
   {
-    return coslookup[i];
+    return this.coslookup[i];
   }
 }

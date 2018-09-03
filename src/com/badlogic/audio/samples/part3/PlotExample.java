@@ -14,11 +14,11 @@ import com.badlogic.audio.visualization.Plot;
  * music playback. This is just an example, you should not do
  * real-time plotting with the Plot class it is just not made for
  * this.
- * 
+ *
  * @author mzechner
  *
  */
-public class PlotExample 
+public class PlotExample
 {
 	public static void main( String[] argv ) throws FileNotFoundException, Exception
 	{
@@ -27,10 +27,8 @@ public class PlotExample
 		float[] samples = new float[1024];
 
 		while( decoder.readSamples( samples ) > 0 )
-		{
 			for( int i = 0; i < samples.length; i++ )
 				allSamples.add( samples[i] );
-		}
 
 		samples = new float[allSamples.size()];
 		for( int i = 0; i < samples.length; i++ )

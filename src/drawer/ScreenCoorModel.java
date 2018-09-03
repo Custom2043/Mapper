@@ -21,19 +21,19 @@ public class ScreenCoorModel extends ColoredScreenCoorModel
 	{
 		super(sc, c);
 		this.textCoors = tc;
-		tt = text;
+		this.tt = text;
 		this.enableVertexArray(3);
 		VAOLoader.storeBufferInAttributeList(3, 2, this.storeTextureCoors(), GL11.GL_FLOAT);
 	}
 	protected ByteBuffer storeTextureCoors()
 	{
 		ByteBuffer buf = BufferUtils.createByteBuffer(this.vertexNumber * 8); // Textures
-		if (tt != null)
-			for (TextureCoor t : textCoors)
-				for (float i : t.inFloatArray(tt))
+		if (this.tt != null)
+			for (TextureCoor t : this.textCoors)
+				for (float i : t.inFloatArray(this.tt))
 					buf.putFloat(i);
 		else
-			for (int i=0;i<textCoors.length * 8;i++)
+			for (int i=0;i<this.textCoors.length * 8;i++)
 				buf.putFloat(-1);
 		buf.flip();
 		return buf;

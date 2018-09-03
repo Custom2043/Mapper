@@ -11,7 +11,7 @@ import java.io.InputStream;
  * in the range [-1,1], merging stereo channels to a mono
  * channel for processing. This only supports 16-bit signed
  * stereo and mono Wav files with a sampling rate of 44100.
- * 
+ *
  * @author mzechner
  *
  */
@@ -19,22 +19,22 @@ public class WaveDecoder implements com.badlogic.audio.io.Decoder
 {
 	/** inverse max short value as float **/
 	private final float MAX_VALUE = 1.0f / Short.MAX_VALUE;
-	
+
 	/** the input stream we read from **/
 	private final EndianDataInputStream in;
-	
+
 	/** number of channels **/
 	private final int channels;
-	
+
 	/** sample rate in Herz**/
 	private final float sampleRate;
-	
+
 	/** **/
-	
+
 	/**
 	 * Constructor, sets the input stream to read
 	 * the Wav file from.
-	 * 
+	 *
 	 * @param stream The input stream.
 	 * @throws Exception in case the input stream couldn't be read properly
 	 */
@@ -42,65 +42,66 @@ public class WaveDecoder implements com.badlogic.audio.io.Decoder
 	{
 		if( stream == null )
 			throw new IllegalArgumentException( "Input stream must not be null" );
-		
-		in = new EndianDataInputStream( new BufferedInputStream( stream, 1024*1024) );		
-		if( !in.read4ByteString().equals( "RIFF" ) )
+
+		this.in = new EndianDataInputStream( new BufferedInputStream( stream, 1024*1024) );
+		if( !this.in.read4ByteString().equals( "RIFF" ) )
 			throw new IllegalArgumentException( "not a wav" );
-		
-		in.readIntLittleEndian();
-		
-		if( !in.read4ByteString().equals( "WAVE" ) )
+
+		this.in.readIntLittleEndian();
+
+		if( !this.in.read4ByteString().equals( "WAVE" ) )
 			throw new IllegalArgumentException( "expected WAVE tag" );
-		
-		if( !in.read4ByteString().equals( "fmt " ) )
+
+		if( !this.in.read4ByteString().equals( "fmt " ) )
 			throw new IllegalArgumentException( "expected fmt tag" );
-		
-		if( in.readIntLittleEndian() != 16 )
+
+		if( this.in.readIntLittleEndian() != 16 )
 			throw new IllegalArgumentException( "expected wave chunk size to be 16" );
-		
-		if( in.readShortLittleEndian() != 1 )
+
+		if( this.in.readShortLittleEndian() != 1 )
 			throw new IllegalArgumentException( "expected format to be 1" );
-		
-		channels = in.readShortLittleEndian();
-		sampleRate = in.readIntLittleEndian();
-		if( sampleRate != 44100 )
+
+		this.channels = this.in.readShortLittleEndian();
+		this.sampleRate = this.in.readIntLittleEndian();
+		if( this.sampleRate != 44100 )
 			throw new IllegalArgumentException( "Not 44100 sampling rate" );
-		in.readIntLittleEndian();
-		in.readShortLittleEndian();
-		int fmt = in.readShortLittleEndian();
+		this.in.readIntLittleEndian();
+		this.in.readShortLittleEndian();
+		int fmt = this.in.readShortLittleEndian();
 
 		if( fmt != 16 )
 			throw new IllegalArgumentException( "Only 16-bit signed format supported" );
-		
-		if( !in.read4ByteString().equals( "data" ) )
+
+		if( !this.in.read4ByteString().equals( "data" ) )
 			throw new RuntimeException( "expected data tag" );
-				
-		in.readIntLittleEndian();
+
+		this.in.readIntLittleEndian();
 	}
-	
+
 	/**
 	 * Tries to read in samples.length samples, merging stereo to a mono
 	 * channel by averaging and converting non float formats to float 32-bit.
 	 * Returns the number of samples actually read. Guarantees that samples.length
 	 * samples are read in if there was enough data in the stream.
-	 * 
+	 *
 	 * @param samples The samples array to write the samples to
 	 * @return The number of samples actually read.
 	 */
+	@Override
 	public int readSamples( float[] samples )
 	{
 		int readSamples = 0;
 		for( int i = 0; i < samples.length; i++ )
 		{
-			float sample = 0; 
+			float sample = 0;
 			try
 			{
-				for( int j = 0; j < channels; j++ )
+				for( int j = 0; j < this.channels; j++ )
 				{
-					int shortValue = in.readShortLittleEndian( );
-					sample += (shortValue * MAX_VALUE);
+					int shortValue = this.in.readShortLittleEndian( );
+					sample += (shortValue * this.MAX_VALUE);
 				}
-				sample /= channels;
+				sample /= this.channels;
 				samples[i] = sample;
 				readSamples++;
 			}
@@ -109,10 +110,10 @@ public class WaveDecoder implements com.badlogic.audio.io.Decoder
 				break;
 			}
 		}
-		
-		return readSamples; 
+
+		return readSamples;
 	}
-	
+
 	public static void main( String[] args ) throws FileNotFoundException, Exception
 	{
 		WaveDecoder decoder = new WaveDecoder( new FileInputStream( "samples/sample.wav" ) );

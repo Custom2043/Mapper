@@ -9,21 +9,22 @@ public class FFTShader extends Matrix2DShader
 	{
 		super(vertexFile, fragmentFile);
 	}
-	
+
+	@Override
 	protected void bindAttributes()
 	{
 		super.bindAttribute(0, "datas");
 	}
-	
+
 	@Override
 	protected void getAllUniformLocations()
 	{
 		super.getAllUniformLocations();
 		this.location_fft = super.getUniformLocation("fft");
 	}
-	
+
 	public void loadFFT(float[] fft)
 	{
-		GL20.glUniform1fv(location_fft, fft);
+		GL20.glUniform1fv(this.location_fft, fft);
 	}
 }

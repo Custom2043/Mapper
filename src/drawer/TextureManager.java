@@ -35,7 +35,7 @@ public class TextureManager
 		else
 			try
 			{
-				return loadTexture(new FileInputStream(f));
+				return this.loadTexture(new FileInputStream(f));
 			}
 			catch(Exception e){Logger.error("Fail in charge of : "+f.getAbsolutePath());Logger.error(e);return null;}
 	}
@@ -45,17 +45,17 @@ public class TextureManager
 		{
 			BufferedImage image = ImageIO.read(is);
 			is.close();
-			
+
 			Texture t = new Texture(glGenTextures(), image.getWidth(),  image.getHeight());
 			t.bind(0);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			
+
 			int[] pixels = new int[image.getWidth() * image.getHeight()];
 		    image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
 
 		    ByteBuffer buffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4);
-		    
+
 		    for (int pixel : pixels)
 		    {
 		    	buffer.put((byte) ((pixel >> 16) & 0xFF));
@@ -65,7 +65,7 @@ public class TextureManager
 		    }
 		    buffer.flip();
 		    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getWidth(), image.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-			
+
 		    this.list.add(t);
 			Logger.debug("Texture loaded correctly");
 			return t;

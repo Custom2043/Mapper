@@ -53,11 +53,13 @@ public class TextureCoor
 	{
 		return new float[]{this.getXStart(text), this.getYStart(text), this.getXEnd(text), this.getYStart(text), this.getXEnd(text), this.getYEnd(text), this.getXStart(text), this.getYEnd(text)};
 	}
+	@Override
 	public String toString()
 	{
 		return "Size ; X : "+this.xSize+", Y : "+this.ySize+",W : "+this.wSize+",H : "+this.hSize+
 			   "\nFlat ; X : "+this.xFlat+", Y : "+this.yFlat+",W : "+this.wFlat+",H : "+this.hFlat;
 	}
+	@Override
 	public TextureCoor clone()
 	{
 		return new TextureCoor(this.xSize,this.ySize,this.wSize,this.hSize, this.xFlat, this.yFlat, this.wFlat, this.hFlat);

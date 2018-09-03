@@ -29,11 +29,11 @@ import org.tritonus.share.sampled.file.TAudioFileReader;
  *
  */
 public class MP3Decoder implements Decoder
-{				
+{
 	AudioInputStream in;
 	FloatSampleBuffer buffer;
 	byte[] bytes;
-	
+
 	public MP3Decoder( InputStream stream ) throws Exception
 	{
 		InputStream in = new BufferedInputStream( stream, 1024*1024 );
@@ -48,47 +48,45 @@ public class MP3Decoder implements Decoder
 	}
 
 	@Override
-	public int readSamples(float[] samples) 
+	public int readSamples(float[] samples)
 	{
-		if( buffer == null || buffer.getSampleCount() < samples.length )
+		if( this.buffer == null || this.buffer.getSampleCount() < samples.length )
 		{
-			buffer = new FloatSampleBuffer( in.getFormat().getChannels(), 1024, in.getFormat().getSampleRate() );
-			bytes = new byte[buffer.getByteArrayBufferSize( in.getFormat() )];
+			this.buffer = new FloatSampleBuffer( this.in.getFormat().getChannels(), 1024, this.in.getFormat().getSampleRate() );
+			this.bytes = new byte[this.buffer.getByteArrayBufferSize( this.in.getFormat() )];
 		}
-			
-		int read = 0;			
+
+		int read = 0;
 		int readBytes = 0;
 		try {
-			readBytes = in.read( bytes, read, bytes.length - read );
+			readBytes = this.in.read( this.bytes, read, this.bytes.length - read );
 		} catch (IOException e) {
 			return 0;
 		}
 		if( readBytes == -1 )
 			return 0;
-		
+
 		read += readBytes;
-		while( readBytes != -1 && read != bytes.length )
+		while( readBytes != -1 && read != this.bytes.length )
 		{
 			try {
-				readBytes = in.read( bytes, read, bytes.length - read );
+				readBytes = this.in.read( this.bytes, read, this.bytes.length - read );
 			} catch (IOException e) {
 				return 0;
 			}
 			read += readBytes;
-		}	
-		
-		int frameCount = bytes.length / in.getFormat().getFrameSize();
-		buffer.setSamplesFromBytes(bytes, 0, in.getFormat(), 0, frameCount);
-		
-		for( int i = 0; i <buffer.getSampleCount(); i++ )
-		{						
-			if( buffer.getChannelCount() == 2 )
-				samples[i] = (buffer.getChannel(0)[i] + buffer.getChannel(1)[i]) / 2;
-			else
-				samples[i] = buffer.getChannel(0)[i];
 		}
-		
-		return buffer.getSampleCount();
+
+		int frameCount = this.bytes.length / this.in.getFormat().getFrameSize();
+		this.buffer.setSamplesFromBytes(this.bytes, 0, this.in.getFormat(), 0, frameCount);
+
+		for( int i = 0; i <this.buffer.getSampleCount(); i++ )
+			if( this.buffer.getChannelCount() == 2 )
+				samples[i] = (this.buffer.getChannel(0)[i] + this.buffer.getChannel(1)[i]) / 2;
+			else
+				samples[i] = this.buffer.getChannel(0)[i];
+
+		return this.buffer.getSampleCount();
 	}
 
 	class MP3AudioFileReader extends TAudioFileReader
@@ -99,7 +97,7 @@ public class MP3Decoder implements Decoder
 				{ MpegEncoding.MPEG2L1, MpegEncoding.MPEG2L2, MpegEncoding.MPEG2L3 },
 				{ MpegEncoding.MPEG1L1, MpegEncoding.MPEG1L2, MpegEncoding.MPEG1L3 },
 				{ MpegEncoding.MPEG2DOT5L1, MpegEncoding.MPEG2DOT5L2,
-				MpegEncoding.MPEG2DOT5L3 },									
+				MpegEncoding.MPEG2DOT5L3 },
 		};
 
 		protected MP3AudioFileReader( ) {
@@ -112,65 +110,36 @@ public class MP3Decoder implements Decoder
 			HashMap aff_properties = new HashMap();
 			HashMap af_properties = new HashMap();
 			int mLength = (int)mediaLength;
-			int size = inputStream.available();
+			inputStream.available();
 			PushbackInputStream pis = new PushbackInputStream(inputStream, MARK_LIMIT);
 			byte head[] = new byte[22];
-			pis.read(head);			
+			pis.read(head);
 
 			// Check for WAV, AU, and AIFF, Ogg Vorbis, Flac, MAC file formats.
 			// Next check for Shoutcast (supported) and OGG (unsupported) streams.
 			if ((head[0] == 'R') && (head[1] == 'I') && (head[2] == 'F')
 					&& (head[3] == 'F') && (head[8] == 'W') && (head[9] == 'A')
-					&& (head[10] == 'V') && (head[11] == 'E'))
-			{				
-				int isPCM = ((head[21] << 8) & 0x0000FF00) | ((head[20]) & 0x00000FF);				
-				throw new UnsupportedAudioFileException("WAV PCM stream found");				
-
-			}
+					&& (head[10] == 'V') && (head[11] == 'E')) throw new UnsupportedAudioFileException("WAV PCM stream found");
 			else if ((head[0] == '.') && (head[1] == 's') && (head[2] == 'n')
-					&& (head[3] == 'd'))
-			{			  
-				throw new UnsupportedAudioFileException("AU stream found");
-			}
+					&& (head[3] == 'd')) throw new UnsupportedAudioFileException("AU stream found");
 			else if ((head[0] == 'F') && (head[1] == 'O') && (head[2] == 'R')
 					&& (head[3] == 'M') && (head[8] == 'A') && (head[9] == 'I')
-					&& (head[10] == 'F') && (head[11] == 'F'))
-			{				
-				throw new UnsupportedAudioFileException("AIFF stream found");
-			}
+					&& (head[10] == 'F') && (head[11] == 'F')) throw new UnsupportedAudioFileException("AIFF stream found");
 			else if (((head[0] == 'M') | (head[0] == 'm'))
 					&& ((head[1] == 'A') | (head[1] == 'a'))
-					&& ((head[2] == 'C') | (head[2] == 'c')))
-			{				
-				throw new UnsupportedAudioFileException("APE stream found");
-			}
+					&& ((head[2] == 'C') | (head[2] == 'c'))) throw new UnsupportedAudioFileException("APE stream found");
 			else if (((head[0] == 'F') | (head[0] == 'f'))
 					&& ((head[1] == 'L') | (head[1] == 'l'))
 					&& ((head[2] == 'A') | (head[2] == 'a'))
-					&& ((head[3] == 'C') | (head[3] == 'c')))
-			{				
-				throw new UnsupportedAudioFileException("FLAC stream found");
-			}
-			// Shoutcast stream ?
+					&& ((head[3] == 'C') | (head[3] == 'c'))) throw new UnsupportedAudioFileException("FLAC stream found");
 			else if (((head[0] == 'I') | (head[0] == 'i'))
 					&& ((head[1] == 'C') | (head[1] == 'c'))
-					&& ((head[2] == 'Y') | (head[2] == 'y')))
-			{
-				pis.unread(head);
-				// Load shoutcast meta data.				
-			}
-			// Ogg stream ?
+					&& ((head[2] == 'Y') | (head[2] == 'y'))) pis.unread(head);
+			// Load shoutcast meta data.
 			else if (((head[0] == 'O') | (head[0] == 'o'))
 					&& ((head[1] == 'G') | (head[1] == 'g'))
-					&& ((head[2] == 'G') | (head[2] == 'g')))
-			{							
-				throw new UnsupportedAudioFileException("Ogg stream found");
-			}
-			// No, so pushback.
-			else
-			{
-				pis.unread(head);
-			}
+					&& ((head[2] == 'G') | (head[2] == 'g'))) throw new UnsupportedAudioFileException("Ogg stream found");
+			else pis.unread(head);
 			// MPEG header info.
 			int nVersion = AudioSystem.NOT_SPECIFIED;
 			int nLayer = AudioSystem.NOT_SPECIFIED;
@@ -214,18 +183,12 @@ public class MP3Decoder implements Decoder
 				aff_properties.put("mp3.vbr.scale", new Integer(m_header.vbr_scale()));
 				FrameSize = m_header.calculate_framesize();
 				aff_properties.put("mp3.framesize.bytes", new Integer(FrameSize));
-				if (FrameSize < 0)
-				{
-					throw new UnsupportedAudioFileException("Invalid FrameSize : " + FrameSize);
-				}
+				if (FrameSize < 0) throw new UnsupportedAudioFileException("Invalid FrameSize : " + FrameSize);
 				nFrequency = m_header.frequency();
 				aff_properties.put("mp3.frequency.hz", new Integer(nFrequency));
 				FrameRate = (float)((1.0 / (m_header.ms_per_frame())) * 1000.0);
 				aff_properties.put("mp3.framerate.fps", new Float(FrameRate));
-				if (FrameRate < 0)
-				{
-					throw new UnsupportedAudioFileException("Invalid FrameRate : " + FrameRate);
-				}
+				if (FrameRate < 0) throw new UnsupportedAudioFileException("Invalid FrameRate : " + FrameRate);
 				if (mLength != AudioSystem.NOT_SPECIFIED)
 				{
 					aff_properties.put("mp3.length.bytes", new Integer(mLength));
@@ -236,46 +199,36 @@ public class MP3Decoder implements Decoder
 				af_properties.put("bitrate", new Integer(BitRate));
 				aff_properties.put("mp3.bitrate.nominal.bps", new Integer(BitRate));
 				nHeader = m_header.getSyncHeader();
-				encoding = sm_aEncodings[nVersion][nLayer - 1];
+				encoding = this.sm_aEncodings[nVersion][nLayer - 1];
 				aff_properties.put("mp3.version.encoding", encoding.toString());
 				if (mLength != AudioSystem.NOT_SPECIFIED)
 				{
 					nTotalMS = Math.round(m_header.total_ms(mLength));
-					aff_properties.put("duration", new Long((long)nTotalMS * 1000L));
+					aff_properties.put("duration", new Long(nTotalMS * 1000L));
 				}
 				aff_properties.put("mp3.copyright", new Boolean(m_header.copyright()));
 				aff_properties.put("mp3.original", new Boolean(m_header.original()));
 				aff_properties.put("mp3.crc", new Boolean(m_header.checksums()));
 				aff_properties.put("mp3.padding", new Boolean(m_header.padding()));
 				InputStream id3v2 = m_bitstream.getRawID3v2();
-				if (id3v2 != null)
-				{
-					aff_properties.put("mp3.id3tag.v2", id3v2);			
-				}
+				if (id3v2 != null) aff_properties.put("mp3.id3tag.v2", id3v2);
 				if (TDebug.TraceAudioFileReader)
 					TDebug.out(m_header.toString());
 			}
 			catch (Exception e)
-			{			
+			{
 				throw new UnsupportedAudioFileException("not a MPEG stream:"
 						+ e.getMessage());
 			}
 			// Deeper checks ?
 			int cVersion = (nHeader >> 19) & 0x3;
-			if (cVersion == 1)
-			{
-				throw new UnsupportedAudioFileException(
-				"not a MPEG stream: wrong version");
-			}
+			if (cVersion == 1) throw new UnsupportedAudioFileException(
+			"not a MPEG stream: wrong version");
 			int cSFIndex = (nHeader >> 10) & 0x3;
-			if (cSFIndex == 3)
-			{
+			if (cSFIndex == 3) throw new UnsupportedAudioFileException(
+			"not a MPEG stream: wrong sampling rate");
 
-				throw new UnsupportedAudioFileException(
-				"not a MPEG stream: wrong sampling rate");
-			}
-
-			AudioFormat format = new MpegAudioFormat(encoding, (float)nFrequency,
+			AudioFormat format = new MpegAudioFormat(encoding, nFrequency,
 					AudioSystem.NOT_SPECIFIED // SampleSizeInBits
 					// -
 					// The

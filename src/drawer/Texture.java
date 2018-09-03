@@ -8,7 +8,7 @@ public class Texture
 {
 	public static Texture[] bounds = new Texture[16];
 	private static int currentlyBound = -1;
-	
+
 	public final int id;
 	public final int width, height;
 
@@ -29,6 +29,6 @@ public class Texture
 	}
 	public void release()
 	{
-		glDeleteTextures(id);
+		glDeleteTextures(this.id);
 	}
 }

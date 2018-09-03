@@ -16,7 +16,7 @@ public class TexturedScreenCoorShader extends ScreenCoorShader
 		this.location_y = super.getUniformLocation("yPos");
 		this.location_sampler = super.getUniformLocation("modelTexture");
 		this.start();
-		GL20.glUniform1i(location_sampler, 0);
+		GL20.glUniform1i(this.location_sampler, 0);
 		ShaderProgram.stop();
 	}
 

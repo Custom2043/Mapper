@@ -107,6 +107,7 @@ public class ScreenCoor
 	public ScreenCoor addWFlat(float wFlat){return new ScreenCoor(this.xScreen,this.yScreen,this.wScreen,this.hScreen, this.xFlat, this.yFlat, this.wFlat+wFlat, this.hFlat);}
 	public ScreenCoor addHFlat(float hFlat){return new ScreenCoor(this.xScreen,this.yScreen,this.wScreen,this.hScreen, this.xFlat, this.yFlat, this.wFlat, this.hFlat+hFlat);}
 
+	@Override
 	public ScreenCoor clone()
 	{
 		return screenFlat(this.xScreen,this.yScreen,this.wScreen,this.hScreen, this.xFlat, this.yFlat, this.wFlat, this.hFlat);

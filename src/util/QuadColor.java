@@ -24,9 +24,9 @@ public class QuadColor
 	}
 	public QuadColor multiply(Color c)
 	{
-		return new QuadColor(u.multiply(c),
-		d.multiply(c),
-		t.multiply(c),
-		q.multiply(c));
+		return new QuadColor(this.u.multiply(c),
+		this.d.multiply(c),
+		this.t.multiply(c),
+		this.q.multiply(c));
 	}
 }

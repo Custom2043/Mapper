@@ -10,7 +10,7 @@ public class LineShader extends ScreenCoorShader
 		super(vertexFile, fragmentFile);
 	}
 	@Override
-	protected void bindAttributes() 
+	protected void bindAttributes()
 	{
 		super.bindAttributes();
 		super.bindAttribute(4, "textureUsed");
@@ -25,13 +25,13 @@ public class LineShader extends ScreenCoorShader
 		this.location_italic = super.getUniformLocation("italicText");
 		this.location_bold_italic = super.getUniformLocation("boldItalic");
 		this.start();
-		GL20.glUniform1i(location_text, 0);
-		GL20.glUniform1i(location_bold, 1);
-		GL20.glUniform1i(location_italic, 2);
-		GL20.glUniform1i(location_bold_italic, 3);
+		GL20.glUniform1i(this.location_text, 0);
+		GL20.glUniform1i(this.location_bold, 1);
+		GL20.glUniform1i(this.location_italic, 2);
+		GL20.glUniform1i(this.location_bold_italic, 3);
 	}
 	public void loadLineStart(float x, float y)
 	{
-		this.loadVector2f(location_lineStart, x, y);
+		this.loadVector2f(this.location_lineStart, x, y);
 	}
 }
